@@ -86,11 +86,15 @@ class df_cache:
 
             records = [cache_record.CacheRecord(filename) for filename in record_files]
 
-            for record in records:
-                if not record.expired and record.supports(func_data):
-                    return record.load_df()
+            return next(
+                (
+                    record.load_df()
+                    for record in records
+                    if not record.expired and record.supports(func_data)
+                ),
+                None,
+            )
 
-            return None
         except:  # pylint: disable=bare-except
             return None
 

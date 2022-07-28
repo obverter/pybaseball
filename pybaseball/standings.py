@@ -22,9 +22,8 @@ def get_tables(soup: BeautifulSoup, season: int) -> List[pd.DataFrame]:
             # https://www.baseball-reference.com/leagues/MLB/1981-standings.shtml
             tables = [x for x in tables if 'overall' in x.get('id', '')]
         for table in tables:
-            data = []
             headings: List[PageElement] = [th.get_text() for th in table.find("tr").find_all("th")]
-            data.append(headings)
+            data = [headings]
             table_body: PageElement = table.find('tbody')
             rows: List[PageElement] = table_body.find_all('tr')
             for row in rows:
@@ -34,7 +33,6 @@ def get_tables(soup: BeautifulSoup, season: int) -> List[pd.DataFrame]:
                 data.append([ele for ele in cols_text if ele])
             datasets.append(data)
     else:
-        data = []
         table = soup.find('table')
         headings = [th.get_text() for th in table.find("tr").find_all("th")]
         headings[0] = "Name"
@@ -47,7 +45,7 @@ def get_tables(soup: BeautifulSoup, season: int) -> List[pd.DataFrame]:
         else:
             for _ in range(16):
                 headings.pop()
-        data.append(headings)
+        data = [headings]
         table_body = table.find('tbody')
         rows = table_body.find_all('tr')
         for row in rows:

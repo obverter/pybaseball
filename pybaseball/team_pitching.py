@@ -28,13 +28,13 @@ def team_pitching_bref(team, start_season, end_season=None):
     if end_season is None:
         end_season = start_season
 
-    url = "https://www.baseball-reference.com/teams/{}".format(team)
+    url = f"https://www.baseball-reference.com/teams/{team}"
 
     data = []
     headings = None
     for season in range(start_season, end_season+1):
-        print("Getting Pitching Data: {} {}".format(season, team))
-        stats_url = "{}/{}.shtml".format(url, season)
+        print(f"Getting Pitching Data: {season} {team}")
+        stats_url = f"{url}/{season}.shtml"
         response = requests.get(stats_url)
         soup = BeautifulSoup(response.content, 'html.parser')
 
@@ -50,7 +50,7 @@ def team_pitching_bref(team, start_season, end_season=None):
             cols = [col.replace('*', '').replace('#', '') for col in cols]  # Removes '*' and '#' from some names
             cols = [col for col in cols if 'Totals' not in col and 'NL teams' not in col and 'AL teams' not in col]  # Removes Team Totals and other rows
             cols.insert(2, season)
-            data.append([ele for ele in cols[0:]])
+            data.append(list(cols[:]))
 
     headings.insert(2, "Year")
     data = pd.DataFrame(data=data, columns=headings) # [:-5]  # -5 to remove Team Totals and other rows (didn't work in multi-year queries)

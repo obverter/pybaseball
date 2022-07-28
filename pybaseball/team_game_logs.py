@@ -11,12 +11,11 @@ def get_table(season, team, log_type):
     t_param = "b" if log_type == "batting" else "p"
     content = requests.get(_URL.format(team, t_param, season)).content
     soup = BeautifulSoup(content, "lxml")
-    table_id = "team_{}_gamelogs".format(log_type)
+    table_id = f"team_{log_type}_gamelogs"
     table = soup.find("table", attrs=dict(id=table_id))
     if table is None:
         raise RuntimeError("Table with expected id not found on scraped page.")
-    data = pd.read_html(str(table))[0]
-    return data
+    return pd.read_html(str(table))[0]
 
 
 def postprocess(data):

@@ -105,7 +105,7 @@ class _PlayerSearchClient:
         if len(results) == 0 and fuzzy:
             print("No identically matched names found! Returning the 5 most similar names.")
             results=get_closest_names(last=last, first=first, player_table=self.table)
-            
+
         return results
 
 

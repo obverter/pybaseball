@@ -82,10 +82,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}" 
 
@@ -104,7 +105,10 @@ class TestDatasourceFangraphs:
                 'stats': 'bat',
                 'lg': 'all',
                 'qual': 'y',
-                'type': stat_list_to_str([FangraphsBattingStats.COMMON, FangraphsBattingStats.WAR], replace_common=False),
+                'type': stat_list_to_str(
+                    [FangraphsBattingStats.COMMON, FangraphsBattingStats.WAR],
+                    replace_common=False,
+                ),
                 'season': season,
                 'month': 0,
                 'season1': season,
@@ -114,10 +118,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}" 
 
@@ -147,10 +152,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
@@ -170,7 +176,13 @@ class TestDatasourceFangraphs:
                 'stats': 'pit',
                 'lg': 'all',
                 'qual': 'y',
-                'type': stat_list_to_str([FangraphsPitchingStats.COMMON, FangraphsPitchingStats.ERA_MINUS], replace_common=False),
+                'type': stat_list_to_str(
+                    [
+                        FangraphsPitchingStats.COMMON,
+                        FangraphsPitchingStats.ERA_MINUS,
+                    ],
+                    replace_common=False,
+                ),
                 'season': season,
                 'month': 0,
                 'season1': season,
@@ -180,10 +192,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
@@ -213,10 +226,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
@@ -236,7 +250,13 @@ class TestDatasourceFangraphs:
                 'stats': 'bat',
                 'lg': 'all',
                 'qual': 'y',
-                'type': stat_list_to_str([FangraphsBattingStats.COMMON, FangraphsBattingStats.HOME_RUNS], replace_common=False),
+                'type': stat_list_to_str(
+                    [
+                        FangraphsBattingStats.COMMON,
+                        FangraphsBattingStats.HOME_RUNS,
+                    ],
+                    replace_common=False,
+                ),
                 'season': season,
                 'month': 0,
                 'season1': season,
@@ -246,10 +266,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
@@ -280,10 +301,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
@@ -304,7 +326,13 @@ class TestDatasourceFangraphs:
                 'stats': 'fld',
                 'lg': 'all',
                 'qual': 'y',
-                'type': stat_list_to_str([FangraphsFieldingStats.COMMON, FangraphsFieldingStats.ULTIMATE_ZONE_RATING], replace_common=False),
+                'type': stat_list_to_str(
+                    [
+                        FangraphsFieldingStats.COMMON,
+                        FangraphsFieldingStats.ULTIMATE_ZONE_RATING,
+                    ],
+                    replace_common=False,
+                ),
                 'season': season,
                 'month': 0,
                 'season1': season,
@@ -314,10 +342,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
 
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
@@ -348,10 +377,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
         response_get_monkeypatch(test_team_pitching_html, expected_url)
@@ -371,7 +401,10 @@ class TestDatasourceFangraphs:
                 'stats': 'pit',
                 'lg': 'all',
                 'qual': 'y',
-                'type': stat_list_to_str([FangraphsPitchingStats.COMMON, FangraphsPitchingStats.WINS], replace_common=False),
+                'type': stat_list_to_str(
+                    [FangraphsPitchingStats.COMMON, FangraphsPitchingStats.WINS],
+                    replace_common=False,
+                ),
                 'season': season,
                 'month': 0,
                 'season1': season,
@@ -381,10 +414,11 @@ class TestDatasourceFangraphs:
                 'age': f"{MIN_AGE},{MAX_AGE}",
                 'filter': '',
                 'players': '',
-                'page': f'1_1000000'
+                'page': '1_1000000',
             },
-            safe=','
+            safe=',',
         )
+
         expected_url = f"{_FG_LEADERS_URL}?{query_params}"
 
         response_get_monkeypatch(test_team_pitching_html, expected_url)

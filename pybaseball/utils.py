@@ -146,22 +146,23 @@ def validate_datestring(date_text: Optional[str]) -> date:
 
 @functools.lru_cache()
 def most_recent_season() -> int:
-	'''
+    '''
 	Find the most recent season.
 
 	Will be either this year (if the season has started or just ended)
 	or last year (if the season has not yet started).
 	'''
 
-	# Get the past year of season dates
-	recent_season_dates = date_range(
-		(datetime.today() - timedelta(weeks=52)).date(),  # From one year ago
-		datetime.today().date(),  # To today
-		verbose=False,
-	)
+    	# Get the past year of season dates
+    recent_season_dates = date_range(
+        (datetime.now() - timedelta(weeks=52)).date(),
+        datetime.now().date(),
+        verbose=False,
+    )
 
-	# Grab the last entry as the most recent game date, the year of which is the most recent season
-	return list(recent_season_dates)[-1][0].year
+
+    # Grab the last entry as the most recent game date, the year of which is the most recent season
+    return list(recent_season_dates)[-1][0].year
 
 
 def date_range(start: date, stop: date, step: int = 1, verbose: bool = True) -> Iterator[Tuple[date, date]]:
@@ -191,31 +192,31 @@ def date_range(start: date, stop: date, step: int = 1, verbose: bool = True) -> 
 
 
 def statcast_date_range(start: date, stop: date, step: int, verbose: bool = True) -> Iterator[Tuple[date, date]]:
-	'''
+    '''
 	Iterate over dates. Skip the offseason dates. Returns a pair of dates for beginning and end of each segment.
 	Range is inclusive of the stop date.
 	If verbose is enabled, it will print a message if it skips offseason dates.
 	This version is Statcast specific, relying on skipping predefined dates from STATCAST_VALID_DATES.
 	'''
-	low = start
+    low = start
 
-	while low <= stop:
-		date_span = low.replace(month=3, day=15), low.replace(month=11, day=15)
-		season_start, season_end = STATCAST_VALID_DATES.get(low.year, date_span)
-		if low < season_start:
-			low = season_start
-			if verbose:
-				print('Skipping offseason dates')
-		elif low > season_end:
-			low, _ = STATCAST_VALID_DATES.get(low.year + 1, (date(month=3, day=15, year=low.year + 1), None))
-			if verbose:
-				print('Skipping offseason dates')
+    while low <= stop:
+        date_span = low.replace(month=3, day=15), low.replace(month=11, day=15)
+        season_start, season_end = STATCAST_VALID_DATES.get(low.year, date_span)
+        if low < season_start:
+            low = season_start
+            if verbose:
+            	print('Skipping offseason dates')
+        elif low > season_end:
+            if verbose:
+                low, _ = STATCAST_VALID_DATES.get(low.year + 1, (date(month=3, day=15, year=low.year + 1), None))
+                print('Skipping offseason dates')
 
-		if low > stop:
-			return
-		high = min(low + timedelta(step - 1), stop)
-		yield low, high
-		low += timedelta(days=step)
+        if low > stop:
+        	return
+        high = min(low + timedelta(step - 1), stop)
+        yield low, high
+        low += timedelta(days=step)
 
 
 def sanitize_date_range(start_dt: Optional[str], end_dt: Optional[str]) -> Tuple[date, date]:
@@ -311,7 +312,7 @@ def get_text_file(url: str) -> str:
 
 
 def flag_imputed_data(statcast_df: pd.DataFrame) -> pd.DataFrame:
-	"""Function to flag possibly imputed data as a result of no-nulls approach (see: https://tht.fangraphs.com/43416-2/)
+    """Function to flag possibly imputed data as a result of no-nulls approach (see: https://tht.fangraphs.com/43416-2/)
 	   For derivation of values see pybaseball/EXAMPLES/imputed_derivation.ipynb
 	   Note that this imputation only occured with TrackMan, not present in Hawk-Eye data (beyond 2020)
 	Args:
@@ -320,33 +321,30 @@ def flag_imputed_data(statcast_df: pd.DataFrame) -> pd.DataFrame:
 		pd.DataFrame: Copy of original dataframe with "possible_imputation" flag
 	"""
 
-	ParameterSet = namedtuple('ParameterSet', ["ev", "angle", "bb_type"])
-	impute_combinations = []
+    ParameterSet = namedtuple('ParameterSet', ["ev", "angle", "bb_type"])
+    impute_combinations = [ParameterSet(ev=80.0, angle=69.0, bb_type="popup")]
 
-	# pop-ups
-	impute_combinations.append(ParameterSet(ev=80.0, angle=69.0, bb_type="popup"))
+    # Flyout
+    impute_combinations.append(ParameterSet(ev=89.2, angle=39.0, bb_type="fly_ball"))
+    impute_combinations.append(ParameterSet(ev=102.8, angle=30.0, bb_type="fly_ball"))
 
-	# Flyout
-	impute_combinations.append(ParameterSet(ev=89.2, angle=39.0, bb_type="fly_ball"))
-	impute_combinations.append(ParameterSet(ev=102.8, angle=30.0, bb_type="fly_ball"))
+    # Line Drive
+    impute_combinations.append(ParameterSet(ev=90.4, angle=15.0, bb_type="line_drive"))
+    impute_combinations.append(ParameterSet(ev=91.1, angle=18.0, bb_type="line_drive"))
 
-	# Line Drive
-	impute_combinations.append(ParameterSet(ev=90.4, angle=15.0, bb_type="line_drive"))
-	impute_combinations.append(ParameterSet(ev=91.1, angle=18.0, bb_type="line_drive"))
+    # Ground balls
+    impute_combinations.append(ParameterSet(ev=82.9, angle=-21.0, bb_type="ground_ball"))
+    impute_combinations.append(ParameterSet(ev=90.3, angle=-17.0, bb_type="ground_ball"))
 
-	# Ground balls
-	impute_combinations.append(ParameterSet(ev=82.9, angle=-21.0, bb_type="ground_ball"))
-	impute_combinations.append(ParameterSet(ev=90.3, angle=-17.0, bb_type="ground_ball"))
-
-	df_imputations = pd.DataFrame(data=impute_combinations)
-	df_imputations["possible_imputation"] = True
-	df_return = statcast_df.merge(df_imputations, how="left",
-								  left_on=["launch_speed", "launch_angle", "bb_type"],
-								  right_on=["ev", "angle", "bb_type"])
-	# Change NaNs to false for boolean consistency
-	df_return["possible_imputation"] = df_return["possible_imputation"].fillna(False)
-	df_return = df_return.drop(["ev", "angle"], axis=1)
-	return df_return
+    df_imputations = pd.DataFrame(data=impute_combinations)
+    df_imputations["possible_imputation"] = True
+    df_return = statcast_df.merge(df_imputations, how="left",
+    							  left_on=["launch_speed", "launch_angle", "bb_type"],
+    							  right_on=["ev", "angle", "bb_type"])
+    # Change NaNs to false for boolean consistency
+    df_return["possible_imputation"] = df_return["possible_imputation"].fillna(False)
+    df_return = df_return.drop(["ev", "angle"], axis=1)
+    return df_return
 
 def norm_pitch_code(pitch: str, to_word: bool = False) -> str:
 	normed = pitch_name_to_code_map.get(pitch.upper())
